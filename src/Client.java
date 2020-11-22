@@ -53,7 +53,10 @@ public class Client {
             while (socket.isConnected()) {
                 ByteBuffer buffer = ByteBuffer.allocate(100000000);
                 try {
-                    socket.read(buffer);
+                    int rect = socket.read(buffer);
+                    if (rect <= 1){
+                        return;
+                    }
                     buffer.flip();
                     byte[] arr = new byte[buffer.limit()];
                     buffer.get(arr, 0, buffer.limit());
@@ -70,7 +73,7 @@ public class Client {
         executor.execute(() -> {
             try {
                 ByteBuffer buffer = data.parseByteBuffer();
-                socket.write(buffer);
+                int rect = socket.write(buffer);
             } catch (IOException e) {
                 e.printStackTrace();
             }
