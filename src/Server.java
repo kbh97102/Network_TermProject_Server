@@ -114,7 +114,7 @@ public class Server {
         for (ChatRoomInfo info : chatRoomInfos) {
             if (info.getRoom_id().equals(workData.getData().getRoomId())) {
                 for (Client client : getClientFromId(info.getUser_ids())) {
-                    if (clientList.contains(client) && client.getId().equals(workData.getSrcSocket().getId())) {
+                    if (clientList.contains(client) && !client.getId().equals(workData.getSrcSocket().getId())) {
                         client.write(workData.getData());
                     }
                 }
