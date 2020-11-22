@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
@@ -17,7 +18,7 @@ public class Server {
     private Vector<Client> clientList;
     private ArrayList<ChatRoomInfo> chatRoomInfos;
     private NetData.Builder dataBuilder;
-    private Executor executor;
+    private ExecutorService executor;
     private ConcurrentLinkedQueue<WorkData> workQueue;
     private HashMap<String, Consumer<WorkData>> workMap;
 
@@ -93,12 +94,15 @@ public class Server {
         workMap.put("image", this::sendText);
         workMap.put("requestAdd", this::requestAdd);
         workMap.put("setName", this::setName);
+        workMap.put("disconnect", this::disconnect);
     }
 
     private void sendUserList(WorkData workData) {
         ArrayList<String> clientIdList = new ArrayList<>();
         for (Client client : clientList) {
-            clientIdList.add(client.getId());
+            if(!client.getId().equals(workData.getData().getUserId())){
+                clientIdList.add(client.getId());
+            }
         }
         workData.getSrcSocket().write(
                 dataBuilder.setType("requestList")
@@ -110,7 +114,7 @@ public class Server {
         for (ChatRoomInfo info : chatRoomInfos) {
             if (info.getRoom_id().equals(workData.getData().getRoomId())) {
                 for (Client client : getClientFromId(info.getUser_ids())) {
-                    if (client.getId().equals(workData.getSrcSocket().getId())) {
+                    if (clientList.contains(client) && client.getId().equals(workData.getSrcSocket().getId())) {
                         client.write(workData.getData());
                     }
                 }
@@ -150,6 +154,11 @@ public class Server {
             }
         }
         return users;
+    }
+
+    private void disconnect(WorkData workData){
+        workData.getSrcSocket().disconnect();
+        clientList.remove(workData.getSrcSocket());
     }
 
     public void writeImage() {

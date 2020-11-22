@@ -2,7 +2,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
 public class Client {
@@ -10,9 +12,10 @@ public class Client {
     private String id;
     private SocketChannel socket;
     private String name;
-    private Executor executor;
+    private ExecutorService executor;
     private Consumer<WorkData> addQueue;
     private NetData.Builder dataBuilder;
+    private Future<?> testFuture;
 
     public Client(SocketChannel socket) {
         this.socket = socket;
@@ -72,5 +75,9 @@ public class Client {
                 e.printStackTrace();
             }
         });
+    }
+
+    public void disconnect(){
+        executor.shutdownNow();
     }
 }
