@@ -157,6 +157,7 @@ public class Server {
     }
 
     private void disconnect(WorkData workData){
+        System.out.println("Disconnect in"+" src id "+workData.getSrcSocket().getId());
         workData.getSrcSocket().disconnect();
         clientList.remove(workData.getSrcSocket());
     }

@@ -136,7 +136,7 @@ public class NetData {
             JSONArray array = (JSONArray) data.getJSONArray("list");
             ArrayList<String> arr = new ArrayList<>();
             for (int i=0;i<array.length();i++){
-                String data = array.getString(i);
+                String data = String.valueOf(array.get(i));
                 String test = data.replace("[", "").replace("]","");
                 System.out.println(data+" "+test);
                 arr.add(test);
