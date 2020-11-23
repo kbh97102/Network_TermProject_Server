@@ -4,6 +4,7 @@ import org.json.JSONObject;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class NetData {
 
@@ -23,7 +24,7 @@ public class NetData {
         private ArrayList<String> list;
 
         public Builder(){
-            list = new ArrayList<>();
+
         }
 
         public Builder setName(String name) {
@@ -59,17 +60,24 @@ public class NetData {
         public NetData build() {
             NetData clientData = new NetData();
             clientData.data = new JSONObject();
+            JSONArray array = new JSONArray();
+            if (Objects.nonNull(list)){
+                for (String id : list){
+                    array.put(id);
+                }
+            }
             try{
                 clientData.data.put("name", name);
                 clientData.data.put("type", type);
                 clientData.data.put("content", content);
-                clientData.data.put("list", list);
+                clientData.data.put("list", array);
                 clientData.data.put("roomId", chatRoomId);
                 clientData.data.put("userId", userId);
             }
             catch (JSONException e){
                 e.printStackTrace();
             }
+            list = null;
             return clientData;
         }
 
