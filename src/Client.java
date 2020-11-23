@@ -51,7 +51,7 @@ public class Client {
     public void read() {
         executor.execute(() -> {
             while (socket.isConnected()) {
-                ByteBuffer buffer = ByteBuffer.allocate(50000);
+                ByteBuffer buffer = ByteBuffer.allocate(300);
                 try {
                     int rect = socket.read(buffer);
                     if (rect <= 1){
@@ -63,6 +63,8 @@ public class Client {
                     buffer.flip();
                     NetData receivedHead = dataBuilder.parseReceivedData(new String(arr));
                     int size = Integer.parseInt(receivedHead.getContent());
+
+                    System.out.println("Header Size "+size);
 
                     ByteBuffer dataBuffer = ByteBuffer.allocate(size);
 
@@ -83,6 +85,16 @@ public class Client {
             try {
                 ByteBuffer buffer = data.parseByteBuffer();
                 int rect = socket.write(buffer);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public void write(ByteBuffer headerBuffer) {
+        executor.execute(() -> {
+            try {
+                socket.write(headerBuffer);
             } catch (IOException e) {
                 e.printStackTrace();
             }

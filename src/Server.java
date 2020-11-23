@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
@@ -61,9 +62,16 @@ public class Server {
                     NetData mainData = dataBuilder.setType("clientId")
                             .setContent(client.getId())
                             .build();
-                    NetData header = dataBuilder.setContent(String.valueOf(mainData.toString().length())).buildHeader();
+
+                    System.out.println("HeaderSize "+mainData.toString().length());
+
+                    ByteBuffer header = ByteBuffer.allocate(6);
+                    header.putChar('s');
+                    header.putInt(mainData.toString().length());
+
                     client.write(header);
                     client.write(mainData);
+
                     client.read();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -110,7 +118,10 @@ public class Server {
         NetData mainData = dataBuilder.setType("requestList")
                 .setList(clientIdList)
                 .build();
-        NetData header = dataBuilder.setContent(String.valueOf(mainData.toString().length())).buildHeader();
+        ByteBuffer header = ByteBuffer.allocate(6);
+        header.putChar('s');
+        header.putInt(mainData.toString().length());
+
         workData.getSrcSocket().write(header);
         workData.getSrcSocket().write(mainData);
     }
@@ -120,7 +131,10 @@ public class Server {
             if (info.getRoom_id().equals(workData.getData().getRoomId())) {
                 for (Client client : getClientFromId(info.getUser_ids())) {
                     if (clientList.contains(client) && !client.getId().equals(workData.getSrcSocket().getId())) {
-                        NetData header = dataBuilder.setContent(String.valueOf(workData.getData().toString().length())).buildHeader();
+                        ByteBuffer header = ByteBuffer.allocate(6);
+                        header.putChar('s');
+                        header.putInt(workData.getData().toString().length());
+
                         client.write(header);
                         client.write(workData.getData());
                     }
@@ -138,7 +152,10 @@ public class Server {
             NetData mainData = dataBuilder.setType("requestAdd")
                     .setContent(chatRoomInfo.getRoom_id())
                     .build();
-            NetData header = dataBuilder.setContent(String.valueOf(mainData.toString().length())).buildHeader();
+            ByteBuffer header = ByteBuffer.allocate(6);
+            header.putChar('s');
+            header.putInt(mainData.toString().length());
+
             client.write(header);
             client.write(mainData);
         }
