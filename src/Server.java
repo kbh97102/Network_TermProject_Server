@@ -63,11 +63,10 @@ public class Server {
                             .setContent(client.getId())
                             .build();
 
-                    System.out.println("HeaderSize "+mainData.toString().length());
-
                     ByteBuffer header = ByteBuffer.allocate(6);
                     header.putChar('s');
-                    header.putInt(mainData.toString().length());
+                    header.putInt(mainData.getData().toString().length());
+                    header.flip();
 
                     client.write(header);
                     client.write(mainData);
@@ -120,7 +119,7 @@ public class Server {
                 .build();
         ByteBuffer header = ByteBuffer.allocate(6);
         header.putChar('s');
-        header.putInt(mainData.toString().length());
+        header.putInt(mainData.getData().toString().length());
 
         workData.getSrcSocket().write(header);
         workData.getSrcSocket().write(mainData);
@@ -133,7 +132,7 @@ public class Server {
                     if (clientList.contains(client) && !client.getId().equals(workData.getSrcSocket().getId())) {
                         ByteBuffer header = ByteBuffer.allocate(6);
                         header.putChar('s');
-                        header.putInt(workData.getData().toString().length());
+                        header.putInt(workData.getData().getData().toString().length());
 
                         client.write(header);
                         client.write(workData.getData());
@@ -154,7 +153,7 @@ public class Server {
                     .build();
             ByteBuffer header = ByteBuffer.allocate(6);
             header.putChar('s');
-            header.putInt(mainData.toString().length());
+            header.putInt(mainData.getData().toString().length());
 
             client.write(header);
             client.write(mainData);
