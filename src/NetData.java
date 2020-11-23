@@ -73,6 +73,17 @@ public class NetData {
             return clientData;
         }
 
+        public NetData buildHeader(){
+            NetData clientData = new NetData();
+            clientData.data = new JSONObject();
+            try{
+                clientData.data.put("size", content);
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+
+            return clientData;
+        }
 
         public NetData parseReceivedData(String data)  {
             NetData receivedData = new NetData();

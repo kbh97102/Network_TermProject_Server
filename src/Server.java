@@ -58,9 +58,12 @@ public class Server {
                     Client client = new Client(clientSocket);
                     client.setAddQueue(this::addWork);
                     clientList.add(client);
-                    client.write(dataBuilder.setType("clientId")
+                    NetData mainData = dataBuilder.setType("clientId")
                             .setContent(client.getId())
-                            .build());
+                            .build();
+                    NetData header = dataBuilder.setContent(String.valueOf(mainData.toString().length())).buildHeader();
+                    client.write(header);
+                    client.write(mainData);
                     client.read();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -104,10 +107,12 @@ public class Server {
                 clientIdList.add(client.getId());
             }
         }
-        workData.getSrcSocket().write(
-                dataBuilder.setType("requestList")
-                        .setList(clientIdList)
-                        .build());
+        NetData mainData = dataBuilder.setType("requestList")
+                .setList(clientIdList)
+                .build();
+        NetData header = dataBuilder.setContent(String.valueOf(mainData.toString().length())).buildHeader();
+        workData.getSrcSocket().write(header);
+        workData.getSrcSocket().write(mainData);
     }
 
     private void sendText(WorkData workData) {
@@ -115,6 +120,8 @@ public class Server {
             if (info.getRoom_id().equals(workData.getData().getRoomId())) {
                 for (Client client : getClientFromId(info.getUser_ids())) {
                     if (clientList.contains(client) && !client.getId().equals(workData.getSrcSocket().getId())) {
+                        NetData header = dataBuilder.setContent(String.valueOf(workData.getData().toString().length())).buildHeader();
+                        client.write(header);
                         client.write(workData.getData());
                     }
                 }
@@ -128,9 +135,12 @@ public class Server {
         chatRoomInfo.setUser_ids(workData.getData().getList());
         chatRoomInfos.add(chatRoomInfo);
         for (Client client : getClientFromId(workData.getData().getList())) {
-            client.write(dataBuilder.setType("requestAdd")
+            NetData mainData = dataBuilder.setType("requestAdd")
                     .setContent(chatRoomInfo.getRoom_id())
-                    .build());
+                    .build();
+            NetData header = dataBuilder.setContent(String.valueOf(mainData.toString().length())).buildHeader();
+            client.write(header);
+            client.write(mainData);
         }
     }
 

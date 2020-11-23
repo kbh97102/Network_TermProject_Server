@@ -51,7 +51,7 @@ public class Client {
     public void read() {
         executor.execute(() -> {
             while (socket.isConnected()) {
-                ByteBuffer buffer = ByteBuffer.allocate(100000000);
+                ByteBuffer buffer = ByteBuffer.allocate(50000);
                 try {
                     int rect = socket.read(buffer);
                     if (rect <= 1){
@@ -61,7 +61,16 @@ public class Client {
                     byte[] arr = new byte[buffer.limit()];
                     buffer.get(arr, 0, buffer.limit());
                     buffer.flip();
-                    addQueue.accept(new WorkData(dataBuilder.parseReceivedData(new String(arr)), this));
+                    NetData receivedHead = dataBuilder.parseReceivedData(new String(arr));
+                    int size = Integer.parseInt(receivedHead.getContent());
+
+                    ByteBuffer dataBuffer = ByteBuffer.allocate(size);
+
+                    while(buffer.hasRemaining()){
+                        socket.read(dataBuffer);
+                    }
+
+                    addQueue.accept(new WorkData(dataBuilder.parseReceivedData(new String(dataBuffer.array())), this));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
