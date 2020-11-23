@@ -51,18 +51,18 @@ public class Client {
     public void read() {
         executor.execute(() -> {
             while (socket.isConnected()) {
-                ByteBuffer buffer = ByteBuffer.allocate(300);
+                ByteBuffer buffer = ByteBuffer.allocate(6);
                 try {
                     int rect = socket.read(buffer);
                     if (rect <= 1){
                         return;
                     }
                     buffer.flip();
-                    byte[] arr = new byte[buffer.limit()];
-                    buffer.get(arr, 0, buffer.limit());
-                    buffer.flip();
-                    NetData receivedHead = dataBuilder.parseReceivedData(new String(arr));
-                    int size = Integer.parseInt(receivedHead.getContent());
+
+                    ByteBuffer headerBuffer = ByteBuffer.wrap(buffer.array(), 2, buffer.array().length);
+
+
+                    int size = headerBuffer.getInt();
 
                     System.out.println("Header Size "+size);
 
