@@ -59,10 +59,9 @@ public class Client {
                     }
                     buffer.flip();
 
-                    ByteBuffer headerBuffer = ByteBuffer.wrap(buffer.array(), 2, buffer.array().length);
+                    buffer.getChar();
 
-
-                    int size = headerBuffer.getInt();
+                    int size = buffer.getInt();
 
                     System.out.println("Header Size "+size);
 
