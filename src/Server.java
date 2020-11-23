@@ -65,11 +65,15 @@ public class Server {
 
                     ByteBuffer header = ByteBuffer.allocate(6);
                     header.putChar('s');
-                    header.putInt(mainData.getData().toString().length());
+                    header.putInt(mainData.getData().toString().getBytes().length);
                     header.flip();
 
-                    client.write(header);
-                    client.write(mainData);
+                    ByteBuffer buffer = ByteBuffer.allocate(6+mainData.getData().toString().getBytes().length);
+                    buffer.put(header);
+                    buffer.put(mainData.getData().toString().getBytes());
+                    buffer.flip();
+
+                    client.write(buffer);
 
                     client.read();
                 } catch (IOException e) {
@@ -120,9 +124,14 @@ public class Server {
         ByteBuffer header = ByteBuffer.allocate(6);
         header.putChar('s');
         header.putInt(mainData.getData().toString().length());
+        header.flip();
 
-        workData.getSrcSocket().write(header);
-        workData.getSrcSocket().write(mainData);
+        ByteBuffer buffer = ByteBuffer.allocate(6+mainData.getData().toString().getBytes().length);
+        buffer.put(header);
+        buffer.put(mainData.getData().toString().getBytes());
+        buffer.flip();
+
+        workData.getSrcSocket().write(buffer);
     }
 
     private void sendText(WorkData workData) {
@@ -132,10 +141,14 @@ public class Server {
                     if (clientList.contains(client) && !client.getId().equals(workData.getSrcSocket().getId())) {
                         ByteBuffer header = ByteBuffer.allocate(6);
                         header.putChar('s');
-                        header.putInt(workData.getData().getData().toString().length());
+                        header.putInt(workData.getData().getData().toString().getBytes().length);
 
-                        client.write(header);
-                        client.write(workData.getData());
+                        ByteBuffer buffer = ByteBuffer.allocate(6+workData.getData().getData().toString().getBytes().length);
+                        buffer.put(header);
+                        buffer.put(workData.getData().getData().toString().getBytes());
+                        buffer.flip();
+
+                        client.write(buffer);
                     }
                 }
                 break;
@@ -153,10 +166,15 @@ public class Server {
                     .build();
             ByteBuffer header = ByteBuffer.allocate(6);
             header.putChar('s');
-            header.putInt(mainData.getData().toString().length());
+            header.putInt(mainData.getData().toString().getBytes().length);
+            header.flip();
 
-            client.write(header);
-            client.write(mainData);
+            ByteBuffer buffer = ByteBuffer.allocate(6+mainData.getData().toString().getBytes().length);
+            buffer.put(header);
+            buffer.put(mainData.getData().toString().getBytes());
+            buffer.flip();
+
+            client.write(buffer);
         }
     }
 

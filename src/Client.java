@@ -49,25 +49,25 @@ public class Client {
     }
 
     public void read() {
+        ByteBuffer buffer = ByteBuffer.allocate(6);
         executor.execute(() -> {
             while (socket.isConnected()) {
-                ByteBuffer buffer = ByteBuffer.allocate(6);
+                buffer.clear();
                 try {
                     int rect = socket.read(buffer);
                     if (rect <= 1){
                         return;
                     }
                     buffer.flip();
-
-                    buffer.getChar();
+                    char c = buffer.getChar();
+                    System.out.println("Head char "+c);
 
                     int size = buffer.getInt();
-
                     System.out.println("Header Size "+size);
 
                     ByteBuffer dataBuffer = ByteBuffer.allocate(size);
 
-                    while(buffer.hasRemaining()){
+                    while(dataBuffer.hasRemaining()){
                         socket.read(dataBuffer);
                     }
 
@@ -75,6 +75,7 @@ public class Client {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
             }
         });
     }
