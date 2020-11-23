@@ -116,6 +116,7 @@ public class Server {
         for (Client client : clientList) {
             if(!client.getId().equals(workData.getData().getUserId())){
                 clientIdList.add(client.getId());
+                System.out.println("Insert");
             }
         }
         NetData mainData = dataBuilder.setType("requestList")
@@ -142,6 +143,7 @@ public class Server {
                         ByteBuffer header = ByteBuffer.allocate(6);
                         header.putChar('s');
                         header.putInt(workData.getData().getData().toString().getBytes().length);
+                        header.flip();
 
                         ByteBuffer buffer = ByteBuffer.allocate(6+workData.getData().getData().toString().getBytes().length);
                         buffer.put(header);
