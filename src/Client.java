@@ -49,10 +49,10 @@ public class Client {
     }
 
     public void read() {
-        ByteBuffer buffer = ByteBuffer.allocate(6);
+
         executor.execute(() -> {
             while (socket.isConnected()) {
-                buffer.clear();
+                ByteBuffer buffer = ByteBuffer.allocate(6);
                 try {
                     int rect = socket.read(buffer);
                     if (rect <= 1){
@@ -70,8 +70,9 @@ public class Client {
                     while(dataBuffer.hasRemaining()){
                         socket.read(dataBuffer);
                     }
-
-                    addQueue.accept(new WorkData(dataBuilder.parseReceivedData(new String(dataBuffer.array())), this));
+                    NetData clientData = dataBuilder.parseReceivedData(new String(dataBuffer.array()));
+                    System.out.println(clientData.getData().toString());
+                    addQueue.accept(new WorkData(clientData, this));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -157,7 +157,6 @@ public class NetData {
             for (int i=0;i<array.length();i++){
                 String data = String.valueOf(array.get(i));
                 String test = data.replace("[", "").replace("]","");
-                System.out.println(data+" "+test);
                 arr.add(test);
             }
             return arr;

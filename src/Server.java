@@ -116,6 +116,7 @@ public class Server {
         for (Client client : clientList) {
             if(!client.getId().equals(workData.getData().getUserId())){
                 clientIdList.add(client.getId());
+                System.out.println("Insert");
             }
         }
         NetData mainData = dataBuilder.setType("requestList")
