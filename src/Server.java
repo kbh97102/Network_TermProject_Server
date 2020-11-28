@@ -142,6 +142,7 @@ public class Server {
                         ByteBuffer header = ByteBuffer.allocate(6);
                         header.putChar('s');
                         header.putInt(workData.getData().getData().toString().getBytes().length);
+                        header.flip();
 
                         ByteBuffer buffer = ByteBuffer.allocate(6+workData.getData().getData().toString().getBytes().length);
                         buffer.put(header);
@@ -163,6 +164,7 @@ public class Server {
         for (Client client : getClientFromId(workData.getData().getList())) {
             NetData mainData = dataBuilder.setType("requestAdd")
                     .setContent(chatRoomInfo.getRoom_id())
+                    .setList(chatRoomInfo.getUser_ids())
                     .build();
             ByteBuffer header = ByteBuffer.allocate(6);
             header.putChar('s');
